@@ -1,0 +1,43 @@
+import { Document } from "mongoose";
+
+export default interface IBlogDoc extends Document {
+  title: string;
+  image_url: string;
+  image_public_id: string;
+  content_section_one: string;
+  slug_title: string;
+  is_published: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+declare global {
+  namespace BlogRequest {
+    interface ICreateBlogInput {
+      title: string;
+      content_section_one: string;
+      slug_title?: string;
+      is_published?: boolean;
+      image_url: string;
+      image_public_id: string;
+    }
+
+    interface IUpdateBlogInput {
+      title?: string;
+      content_section_one?: string;
+    }
+
+    interface IDeleteAllBlogInput {
+      delete_key: string;
+    }
+
+    interface IUpdateImage {
+      image_url: string;
+      image_public_id: string;
+    }
+    interface IPublishBlog {
+      id: string;
+      is_published: string;
+    }
+  }
+}
