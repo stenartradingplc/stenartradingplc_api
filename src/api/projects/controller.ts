@@ -152,21 +152,6 @@ export const deleteAllProjects: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Get all drafted projects
-export const getDraftedProjects: RequestHandler = async (req, res, next) => {
-  try {
-    const draftedProjects = await Project.getDraftedProjects();
-
-    // Response
-    res.status(200).json({
-      status: "SUCCESS",
-      result: draftedProjects.length,
-      data: { draftedProjects },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Update project image
 export const updateProjectImg: RequestHandler = async (req, res, next) => {

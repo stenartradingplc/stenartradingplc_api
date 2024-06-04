@@ -65,23 +65,6 @@ export const getAllPublished: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Find all
-export const getAllDrafts: RequestHandler = async (req, res, next) => {
-  try {
-    const blog = await Blog.getAllDrafts();
-
-    // Response
-    res.status(200).json({
-      status: "SUCCESS",
-      results: blog.length,
-      data: {
-        blog,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Find by id
 export const getById: RequestHandler = async (req, res, next) => {

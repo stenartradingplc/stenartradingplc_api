@@ -15,7 +15,6 @@ import {
   deleteAllProjects,
   deleteProject,
   getAllProjects,
-  getDraftedProjects,
   getProject,
   getPublishedProjects,
   publishProject,
@@ -41,12 +40,7 @@ router
   );
 
 router.get("/published", getPublishedProjects);
-router.get(
-  "/drafts",
-  protect,
-  auth("Super-admin", "Admin"),
-  getDraftedProjects
-);
+
 
 router.patch(
   "/publish",

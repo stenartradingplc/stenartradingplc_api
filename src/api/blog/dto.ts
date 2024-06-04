@@ -4,7 +4,7 @@ export default interface IBlogDoc extends Document {
   title: string;
   image_url: string;
   image_public_id: string;
-  content_section_one: string;
+  content: string;
   slug_title: string;
   is_published: boolean;
   createdAt: Date;
@@ -15,7 +15,7 @@ declare global {
   namespace BlogRequest {
     interface ICreateBlogInput {
       title: string;
-      content_section_one: string;
+      content: string;
       slug_title?: string;
       is_published?: boolean;
       image_url: string;
@@ -24,7 +24,7 @@ declare global {
 
     interface IUpdateBlogInput {
       title?: string;
-      content_section_one?: string;
+      content?: string;
     }
 
     interface IDeleteAllBlogInput {

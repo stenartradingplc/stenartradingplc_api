@@ -8,7 +8,6 @@ import {
   getByTitle,
   updateBlog,
   updateBlogImage,
-  getAllDrafts,
   getAllPublished,
   publishBlog,
 } from "./controller";
@@ -46,7 +45,7 @@ router
   );
 
 router.get("/published", getAllPublished);
-router.get("/drafts", protect, auth("Super-admin", "Admin"), getAllDrafts);
+
 router.get("/getbytitle/:title", getByTitle);
 router.patch(
   "/publish/:id",

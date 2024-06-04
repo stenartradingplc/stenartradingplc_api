@@ -18,9 +18,9 @@ const blogSchema: Schema = new Schema(
       type: String,
       required: [true, "please provide the image public id value"],
     },
-    content_section_one: {
+    content: {
       type: String,
-      required: [true, "please provide the first content section"],
+      required: [true, "please provide the content section"],
     },
     slug_title: {
       type: String,
