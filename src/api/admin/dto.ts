@@ -8,12 +8,13 @@ export default interface IAdminDoc extends Document {
   role: string;
   default_password: string | undefined;
   is_default_password: boolean;
+  otp: string;
   password: string;
   password_confirm: string | undefined;
   first_account: boolean;
   password_changed_at: Date;
   email_phone_number_changed_at: Boolean;
-  account_status: string;
+  account_status: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword: (candidatePassword: string, password: string) => boolean;
@@ -45,9 +46,9 @@ declare global {
       password: string;
       password_confirm: string;
     }
-    interface IUpdateAdminProfile {
-      first_name?: string;
-      last_name?: string;
+    interface IResetPassword {
+      otp: string;
+      password: string;
     }
     interface IUpdateEmailOrPhoneNumber {
       email: string;
@@ -57,17 +58,19 @@ declare global {
       role: string;
       id: string;
     }
-    interface IUpdateAdminPassword {
-      current_password: string;
+    interface IForgotPassword {
+      email: string;
+    }
+    interface IForceResetPassword {
+      email: string;
       password: string;
-      password_confirm: string;
     }
     interface IResetAdminPassword {
       id: string;
     }
     interface IUpdateAccountStatus {
       id: string;
-      account_status: string;
+      account_status: boolean;
     }
     interface IDeleteAllAdmins {
       delete_key: string;
@@ -86,7 +89,7 @@ declare global {
       first_account: boolean;
       password_changed_at: Date;
       email_phone_number_changed_at: Boolean;
-      account_status: string;
+      account_status: boolean;
       createdAt: Date;
       updatedAt: Date;
     }

@@ -8,27 +8,24 @@ import {
   getAdmin,
   updateDefaultPassword,
   createAdmin,
-  updateAdminProfile,
-  updateEmailOrPhoneNumber,
-  updateAdminRole,
-  updateAdminPassword,
-  resetAdminPassword,
+  forgotAdminPassword,
   updateAdminAccountStatus,
   deleteAdmin,
   deleteAllAdmins,
   getAllAdmins,
+  resetPasswordPassword,
+  forceResetPassword
 } from "./controller";
 import {
   createFirstAdminValidation,
   adminLoginValidation,
   updateDefaultPasswordValidation,
   createAdminValidation,
-  updateEmailOrPhoneNumberValidation,
-  updateAdminRoleValidation,
-  updateAdminPasswordValidation,
-  resetAdminPasswordValidation,
+  forgotPasswordValidation,
   updateAdminAccountStatusValidation,
   deleteAllAdminsValidation,
+  verifyPasswordValidation,
+  forceResetPasswordValidation,
 } from "./validation";
 
 import validator from "../../utils/validator";
@@ -49,51 +46,23 @@ router
   .route("/firstaccount")
   .post(validator(createFirstAdminValidation), createAdminFirstAccount);
 
-router.patch(
-  "/profile",
-  protect,
-  auth("Super-admin", "Admin", "Call-center"),
-  updateAdminProfile
-);
 
-router.patch(
-  "/emailorphonenumber",
-  protect,
-  auth("Super-admin", "Admin", "Call-center"),
-  validator(updateEmailOrPhoneNumberValidation),
-  updateEmailOrPhoneNumber
-);
+// router.post(
+//   "/forgotpassword",
+//   validator(forgotPasswordValidation),
+//   forgotAdminPassword
+// );
 
-router.patch(
-  "/password",
-  protect,
-  auth("Super-admin", "Admin", "Call-center"),
-  validator(updateAdminPasswordValidation),
-  updateAdminPassword
-);
+// router.patch(
+//   "/verifypassword",
+//   validator(verifyPasswordValidation),
+//   resetPasswordPassword
+// );
 
-router.patch(
-  "/resetpassword",
-  protect,
-  auth("Super-admin"),
-  validator(resetAdminPasswordValidation),
-  resetAdminPassword
-);
-
-router.patch(
-  "/role",
-  protect,
-  auth("Super-admin"),
-  validator(updateAdminRoleValidation),
-  updateAdminRole
-);
-
-router.patch(
-  "/accountstatus",
-  protect,
-  auth("Super-admin"),
-  validator(updateAdminAccountStatusValidation),
-  updateAdminAccountStatus
+router.post(
+  "/forceresetpassword",
+  validator(forceResetPasswordValidation),
+  forceResetPassword
 );
 
 router
@@ -104,7 +73,7 @@ router
     validator(createAdminValidation),
     createAdmin
   )
-  .get(protect, auth("Super-admin", "Admin", "Call-center"), getAllAdmins)
+  .get(protect, auth("Super-admin", "Admin"), getAllAdmins)
   .delete(
     protect,
     auth("Super-admin"),
@@ -112,9 +81,18 @@ router
     deleteAllAdmins
   );
 
+router.patch(
+  "/status/:id",
+  protect,
+  auth("Super-admin"),
+  validator(updateAdminAccountStatusValidation),
+  updateAdminAccountStatus
+);
+
+  
 router
   .route("/:id")
-  .get(protect, auth("Super-admin", "Admin", "Call-center"), getAdmin)
+  .get(protect, auth("Super-admin", "Admin"), getAdmin)
   .delete(protect, auth("Super-admin"), deleteAdmin);
 
 export default router;

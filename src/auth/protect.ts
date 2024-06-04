@@ -33,7 +33,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         return next(new AppError("Please change your default password.", 400));
       }
 
-      if (admin.account_status === "Inactive") {
+      if (!admin.account_status) {
         return next(new AppError("You're account is not active.", 401));
       }
 

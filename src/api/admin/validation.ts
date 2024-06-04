@@ -27,29 +27,24 @@ export const updateDefaultPasswordValidation = Joi.object({
   password_confirm: Joi.string().equal(Joi.ref("password")).required(),
 });
 
-export const updateEmailOrPhoneNumberValidation = Joi.object({
-  phone_number: Joi.string().required(),
-  email: Joi.string().required(),
+
+export const forgotPasswordValidation = Joi.object({
+  email: Joi.string().required()
 });
 
-export const updateAdminRoleValidation = Joi.object({
-  id: Joi.required(),
-  role: Joi.required(),
-});
-
-export const updateAdminPasswordValidation = Joi.object({
-  current_password: Joi.string().required(),
+export const verifyPasswordValidation = Joi.object({
+  otp: Joi.string().required(),
   password: Joi.string().required(),
   password_confirm: Joi.string().equal(Joi.ref("password")).required(),
 });
 
-export const resetAdminPasswordValidation = Joi.object({
-  id: Joi.required(),
+export const forceResetPasswordValidation = Joi.object({
+  email: Joi.string().required(),
+  password: Joi.string().min(8).required(),
 });
 
 export const updateAdminAccountStatusValidation = Joi.object({
-  id: Joi.required(),
-  account_status: Joi.required(),
+  account_status: Joi.boolean().required(),
 });
 
 export const deleteAllAdminsValidation = Joi.object({

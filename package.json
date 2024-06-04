@@ -20,6 +20,7 @@
   "homepage": "https://github.com/stenartradingplc/stenartradingplc_api#readme",
   "dependencies": {
     "@types/helmet": "^4.0.0",
+    "@types/nodemailer": "^6.4.15",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.37.2",
     "compression": "^1.7.4",
@@ -31,6 +32,7 @@
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.0",
+    "nodemailer": "^6.9.13",
     "nodemon": "^3.1.2",
     "slugify": "^1.6.6",
     "typescript": "^5.1.3",
