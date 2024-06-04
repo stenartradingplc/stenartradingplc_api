@@ -47,6 +47,9 @@ const adminSchema: Schema = new Schema(
     default_password: {
       type: String,
     },
+    otp: {
+      type: String,
+    },
     is_default_password: {
       type: Boolean,
       default: true,
@@ -55,15 +58,6 @@ const adminSchema: Schema = new Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password can not be less than 8 characters"],
-    },
-    password_confirm: {
-      type: String,
-      required: [true, "Password confirm is required"],
-      validate: {
-        validator: function (this: IAdminDoc, value: string) {
-          return value === this.password;
-        },
-      },
     },
     first_account: {
       type: Boolean,
@@ -75,12 +69,8 @@ const adminSchema: Schema = new Schema(
       default: false,
     },
     account_status: {
-      type: String,
-      default: "Active",
-      enum: {
-        values: ["Active", "Inactive"],
-        message: "Invalid or unknown account status",
-      },
+      type: Boolean,
+      default: true,
     },
   },
   {

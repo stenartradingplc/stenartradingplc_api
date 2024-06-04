@@ -14,5 +14,13 @@ export default {
     api_key: <string>process.env.CLOUDINARY_API_KEY,
     api_secret: <string>process.env.CLOUDINARY_API_SECRET,
   },
+  smtp: {
+    host: <string>process.env.SMTP_HOST,
+    port: <string>process.env.EMAIL_PORT,
+    email: <string>process.env.SENDER_EMAIL,
+    pswd: <string>process.env.SENDER_PSWD,
+    sender_name: <string>process.env.SENDER_NAME,
+    sender_email: <string>process.env.SENDER_EMAIL,
+  }
 };
 

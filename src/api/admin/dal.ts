@@ -1,6 +1,6 @@
 import AdminModel from "./model";
 import IAdminDoc from "./dto";
-import generatePassword from "../../utils/generate_password";
+import generatePassword, {generateAdminPassword} from "../../utils/generate_password";
 import APIFeatures from "../../utils/api_features";
 
 export default class Admin {
@@ -8,7 +8,7 @@ export default class Admin {
   static async createFirstAdmin(data: AdminRequest.ICreateFirstAdminInput) {
     try {
       // Default password
-      const first_account_default_password = "setartrading1234";
+      const first_account_default_password = "stenartrading1234";
 
       // Create an admin
       const newAdmin = await AdminModel.create({
@@ -35,7 +35,7 @@ export default class Admin {
   ): Promise<IAdminDoc> {
     try {
       // Generate password
-      const default_password = generatePassword();
+      const default_password = generateAdminPassword();
 
       const newAdmin = await AdminModel.create({
         first_name: data.first_name,
@@ -61,6 +61,14 @@ export default class Admin {
     const admin = await AdminModel.findOne({
       $or: [{ email: email_or_phone }, { phone_number: email_or_phone }],
     });
+    return admin;
+  }
+
+  // get by otp code
+  static async getByOTPCode(
+    otp: string
+  ): Promise<IAdminDoc | null> {
+    const admin = await AdminModel.findOne({otp});
     return admin;
   }
 
@@ -109,56 +117,6 @@ export default class Admin {
     }
   }
 
-  // Update admin profile
-  static async updateAdminProfile(
-    id: string,
-    data: AdminRequest.IUpdateAdminProfile
-  ): Promise<IAdminDoc | null> {
-    try {
-      const admin = await AdminModel.findByIdAndUpdate(
-        id,
-        {
-          first_name: data.first_name,
-          last_name: data.last_name,
-        },
-        { runValidators: true, new: true }
-      );
-      return admin;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Update email or phone number
-  static async updateEmailOrPhoneNumber(
-    id: string,
-    email_phone_number_changed_at: boolean,
-    data: AdminRequest.IUpdateEmailOrPhoneNumber
-  ): Promise<IAdminDoc | null> {
-    try {
-      let admin: IAdminDoc | null;
-      if (email_phone_number_changed_at) {
-        admin = await AdminModel.findByIdAndUpdate(
-          id,
-          {
-            phone_number: data.phone_number,
-            email: data.email,
-            email_phone_number_changed_at: email_phone_number_changed_at,
-          },
-          { runValidators: true, new: true }
-        );
-      } else {
-        admin = await AdminModel.findByIdAndUpdate(id, {
-          phone_number: data.phone_number,
-          email: data.email,
-        });
-      }
-      return admin;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   // Update email_phone_number changed at to false
   static async updateEmailOrPhoneNumberChangedAt(
     id: string
@@ -175,32 +133,13 @@ export default class Admin {
     }
   }
 
-  // Update admin role
-  static async updateAdminRole(
-    id: string,
-    role: string
-  ): Promise<IAdminDoc | null> {
-    try {
-      const admin = await AdminModel.findByIdAndUpdate(
-        id,
-        { role },
-        { runValidators: true, new: true }
-      );
-      return admin;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   // Update admin password
   static async updateAdminPassword(
     admin: IAdminDoc,
     password: string,
-    password_confirm: string
   ): Promise<IAdminDoc | null> {
     try {
       admin.password = password;
-      admin.password_confirm = password_confirm;
       await admin.save();
 
       return admin;
@@ -209,29 +148,23 @@ export default class Admin {
     }
   }
 
-  // Reset admin password
-  static async resetAdminPassword(admin: IAdminDoc): Promise<IAdminDoc> {
+  // Update otp
+  static async updateOTP(
+    id: string,
+    otp: string,
+  ): Promise<void> {
     try {
-      // Generate default password
-      const default_password = generatePassword();
-
-      // Update
-      admin.default_password = default_password;
-      admin.password = default_password;
-      admin.password_confirm = default_password;
-      admin.is_default_password = true;
-      await admin.save();
-
-      return admin;
+      await AdminModel.updateOne({_id: id}, {$set: {otp}});
     } catch (error) {
       throw error;
     }
   }
+
 
   // Update admin account status
   static async updateAdminAccountStatus(
     id: string,
-    account_status: string
+    account_status: boolean
   ): Promise<IAdminDoc | null> {
     try {
       const admin = await AdminModel.findByIdAndUpdate(

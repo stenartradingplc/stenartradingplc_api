@@ -3,7 +3,9 @@ import AppError from "../../utils/app_error";
 import Admin from "./dal";
 import IAdminDoc from "./dto";
 import generateToken from "../../utils/generate_token";
+import generatePassword from "../../utils/generate_password";
 import configs from "../../configs";
+import sendEmail from "../../utils/send_email";
 
 export const createAdminFirstAccount: RequestHandler = async (
   req,
@@ -103,6 +105,11 @@ export const adminLogin: RequestHandler = async (req, res, next) => {
         new AppError("Invalid email / phone number or password", 401)
       );
 
+    if(!admin.account_status)
+      return next(
+        new AppError("Your Account has been banned please contact the system owner", 401)
+      );
+
     // Update email phone number changed at to false if it is true
     if (admin.email_phone_number_changed_at) {
       await Admin.updateEmailOrPhoneNumberChangedAt(admin.id);
@@ -196,187 +203,86 @@ export const updateDefaultPassword: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Update admin profile
-export const updateAdminProfile: RequestHandler = async (req, res, next) => {
+
+// forgot admin password
+export const forgotAdminPassword: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const { first_name, last_name } = <AdminRequest.IUpdateAdminProfile>(
-      req.body
-    );
-
-    // User
-    const user = <IAdminDoc>req.user;
-
-    // Update
-    const admin = await Admin.updateAdminProfile(user.id, {
-      first_name,
-      last_name,
-    });
-    if (!admin) return next(new AppError("Admin does not exist", 400));
-
-    // Respond
-    res.status(200).json({
-      status: "SUCCESS",
-      message: "You have updated your profile successfully",
-      data: {
-        admin,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Update phone or email
-export const updateEmailOrPhoneNumber: RequestHandler = async (
-  req,
-  res,
-  next
-) => {
-  try {
-    // Get body
-    const { phone_number, email } = <AdminRequest.IUpdateEmailOrPhoneNumber>(
-      req.value
-    );
-
-    // user
-    const user = <IAdminDoc>req.user;
-
-    // Check if the phone number or email is changed
-    let email_phone_number_changed_at: boolean = false;
-    let message: string = "You have updated your profile successfully.";
-    if (user.email !== email || user.phone_number !== phone_number) {
-      email_phone_number_changed_at = true;
-      message =
-        "You have updated your profile successfully. Please login again.";
-    }
-
-    // Update
-    const admin = await Admin.updateEmailOrPhoneNumber(
-      user.id,
-      email_phone_number_changed_at,
-      {
-        phone_number,
-        email,
-      }
-    );
-
-    // Respond
-    res.status(200).json({
-      status: "SUCCESS",
-      message,
-      data: {
-        admin,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Update admin role
-export const updateAdminRole: RequestHandler = async (req, res, next) => {
-  try {
-    // Get body
-    const { role, id } = <AdminRequest.IUpdateAdminRole>req.value;
-
-    // check if the admins exists
-    const getAdmin = await Admin.getAdmin(id);
-    if (!getAdmin)
-      return next(new AppError("There is no Admin with the specified ID", 404));
-
-    // Check if the user is the first account
-    if (getAdmin.first_account)
-      return next(
-        new AppError(
-          "Your default role is Super-admin. It can not be changed",
-          400
-        )
-      );
-
-    // Check if the user is trying to change its own role
-    const user = <IAdminDoc>req.user;
-    if (user.id === id)
-      return next(new AppError("You can not change your own role.", 401));
-
-    // Update
-    const admin = await Admin.updateAdminRole(getAdmin.id, role);
-
-    // Respond
-    res.status(200).json({
-      status: "SUCCESS",
-      message: `${getAdmin.first_name} ${getAdmin.last_name}'s role is updated from ${getAdmin.role} to ${admin?.role}`,
-      data: {
-        admin,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Update admin password
-export const updateAdminPassword: RequestHandler = async (req, res, next) => {
-  try {
-    // Get body
-    const { current_password, password, password_confirm } = <
-      AdminRequest.IUpdateAdminPassword
+    const { email } = <
+      AdminRequest.IForgotPassword
     >req.value;
 
-    // user
-    const user = <IAdminDoc>req.user;
+    const existingAcc = await Admin.getAdminByEmailOrPhoneNumber(email)
+    if (!existingAcc)
+      return next(new AppError("There is no Admin with the specified email", 404));
 
-    // Check the current password
-    if (!user.comparePassword(current_password, user.password))
-      return next(new AppError("Invalid current password.", 401));
+    const otpCode = generatePassword();
 
-    // Update
+    await sendEmail(existingAcc.email, "Forgot password verification",
+     otpCode);
+
+    await Admin.updateOTP(existingAcc.id, otpCode);
+
+    // Respond
+    res.status(200).json({
+      status: "SUCCESS",
+      message:
+        "We have sent a verification code to your email address.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// force Reset Password
+export const forceResetPassword: RequestHandler = async (req, res, next) => {
+  try {
+    // Get body
+    const { email, password } = <
+      AdminRequest.IForceResetPassword
+    >req.value;
+
+    const existingAcc = await Admin.getAdminByEmailOrPhoneNumber(email)
+    if (!existingAcc)
+      return next(new AppError("There is no Admin with the specified email", 404));
+
+    await Admin.updateAdminPassword(existingAcc, password);
+
+    // Respond
+    res.status(200).json({
+      status: "SUCCESS",
+      message:
+        "Your password has been updated please check your email",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// forgot admin password
+export const resetPasswordPassword: RequestHandler = async (req, res, next) => {
+  try {
+    // Get body
+    const { otp, password } = <
+      AdminRequest.IResetPassword
+    >req.value;
+
+    const existingOTP = await Admin.getByOTPCode(otp)
+    if (!existingOTP)
+      return next(new AppError("INCORRECT OTP CODE!", 400));
+
+
+    // Update password
     const admin = await Admin.updateAdminPassword(
-      user,
+      existingOTP,
       password,
-      password_confirm
     );
 
     // Respond
     res.status(200).json({
       status: "SUCCESS",
       message:
-        "You have successfully updated your password. Please login again",
-      data: {
-        admin,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Reset admin password
-export const resetAdminPassword: RequestHandler = async (req, res, next) => {
-  try {
-    // Get body
-    const { id } = <AdminRequest.IResetAdminPassword>req.value;
-
-    // check if the admins exists
-    const getAdmin = await Admin.getAdmin(id);
-    if (!getAdmin)
-      return next(new AppError("There is no Admin with the specified ID", 404));
-
-    // Check if the admin id and the admin resetting id are similar
-    const user = <IAdminDoc>req.user;
-    if (id === user.id)
-      return next(new AppError("You can not reset your own password", 401));
-
-    // Reset
-    const admin = await Admin.resetAdminPassword(getAdmin);
-
-    // Respond
-    res.status(200).json({
-      status: "SUCCESS",
-      message: "You have successfully resetted your password",
-      data: {
-        admin,
-      },
+        "You have updated your password succesfuly please login.",
     });
   } catch (error) {
     next(error);
@@ -391,8 +297,9 @@ export const updateAdminAccountStatus: RequestHandler = async (
 ) => {
   try {
     // Get body
-    const { id, account_status } = <AdminRequest.IUpdateAccountStatus>req.value;
-
+    const {account_status } = <AdminRequest.IUpdateAccountStatus>req.value;
+    const id = req.params.id;
+    
     // check if the admins exists
     const getAdmin = await Admin.getAdmin(id);
     if (!getAdmin)
@@ -416,9 +323,9 @@ export const updateAdminAccountStatus: RequestHandler = async (
 
     // Message
     let message: string = `Unknown status`;
-    if (account_status === "Active") {
+    if (account_status) {
       message = `${getAdmin.first_name} ${getAdmin.last_name}'s account is successfully activated`;
-    } else if (account_status === "Inactive") {
+    } else if (!account_status) {
       message = `${getAdmin.first_name} ${getAdmin.last_name}'s account is successfully deactivated`;
     } else {
       return next(new AppError(`Unknown account status`, 400));
