@@ -37,11 +37,7 @@ const ContactUsSchema: Schema = new Schema(
         values: ["New", "Old"],
         message: "Invalid Read Status",
       },
-    },
-    first_read_by: {
-      type: String,
-      reqired: [true, "first read by is required"],
-    },
+    }
   },
   {
     writeConcern: {
