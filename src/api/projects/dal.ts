@@ -120,16 +120,6 @@ export default class Project {
     }
   }
 
-  // Get drafted projects
-  static async getDraftedProjects(): Promise<IProjectDoc[]> {
-    try {
-      const draftedProjects = await ProjectModel.find({ is_published: false });
-      return draftedProjects;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   // Update project image
   static async updateProjectImg(
     data: ProjectRequest.IUpdateProjectImg

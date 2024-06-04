@@ -37,16 +37,6 @@ export default class Blog {
     }
   }
 
-  // Get all blogs for Admin
-  static async getAllDrafts(): Promise<IBlogDoc[]> {
-    try {
-      const blog = await BlogModel.find({ is_published: false });
-      return blog;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   // Find by id
   static async getById(id: string): Promise<IBlogDoc | null> {
     try {
