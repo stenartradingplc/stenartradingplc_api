@@ -6,7 +6,6 @@ export default interface IContactUsDoc extends Document {
   phone_number: string;
   message: string;
   read_status: string;
-  first_read_by: string;
   createdAt: Date;
   updatedAt: Date;
 }

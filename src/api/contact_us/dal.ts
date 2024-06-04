@@ -44,7 +44,7 @@ export default class ContactUs {
   static async updateContactUsStatus(adminName: string, contactUsId: string){
     try {
       await ContactUsModel.findByIdAndUpdate(contactUsId, 
-        {first_read_by: adminName, read_status: "Old"})
+        {read_status: "Old"})
     } catch (error) {
       throw error;
     }
@@ -53,7 +53,7 @@ export default class ContactUs {
     // check if current contact us is read or not and update
     static async checkAndUpdateReadStatus(adminName: string, id: string): Promise<void> {
       try {
-        const contactUs = await ContactUsModel.findOne({ $and: [ { first_read_by: adminName }, { id} ] });
+        const contactUs = await ContactUsModel.findOne({ id});
         
         if(!contactUs){
           await this.updateContactUsStatus(adminName, id);
