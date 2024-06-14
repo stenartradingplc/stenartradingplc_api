@@ -17,7 +17,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     }
 
     // Check token
-    if (!token) return next(new AppError("Please login.", 400));
+    if (!token) return next(new AppError("Please login", 400));
 
     // Verify token
     const decodedData = verifyToken(token);

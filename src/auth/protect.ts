@@ -14,7 +14,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       token = req.headers.authorization.split(" ")[1];
     }
 
-    if (!token) return next(new AppError("Please login", 401));
+    if (!token) return next(new AppError("Please login", 403));
 
     // Verify the token
     const decodedData = verifyToken(token);
@@ -24,24 +24,24 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         return next(
           new AppError(
             "Unable to authorize you to this resource. Please login",
-            401
+            403
           )
         );
       }
 
       if (admin.is_default_password) {
-        return next(new AppError("Please change your default password.", 400));
+        return next(new AppError("Please change your default password.", 403));
       }
 
       if (!admin.account_status) {
-        return next(new AppError("You're account is not active.", 401));
+        return next(new AppError("You're account is not active.", 403));
       }
 
       if (admin.email_phone_number_changed_at) {
         return next(
           new AppError(
             "You recently changed your email or phone number. Please login again",
-            401
+            403
           )
         );
       }
@@ -50,7 +50,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         return next(
           new AppError(
             "You recently changed your password. Please login again",
-            401
+            403
           )
         );
       }
