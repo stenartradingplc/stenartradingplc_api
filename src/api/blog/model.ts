@@ -14,7 +14,7 @@ const blogSchema: Schema = new Schema(
       type: String,
       required: [true, "please provide the image url"],
     },
-    image_public_id: {
+    image_key: {
       type: String,
       required: [true, "please provide the image public id value"],
     },

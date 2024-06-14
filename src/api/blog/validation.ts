@@ -3,9 +3,7 @@ import Joi from "joi";
 export const createBlogValidation = Joi.object({
   title: Joi.required(),
   content: Joi.string().required(),
-  is_published: Joi.boolean(),
-  image_url: Joi.string().required(),
-  image_public_id: Joi.string().required(),
+  is_published: Joi.boolean()
 });
 
 export const updateBlogValidation = Joi.object({
@@ -18,11 +16,6 @@ export const deleteAllBlogsValidation = Joi.object({
 });
 
 export const publishBlogValidator = Joi.object({
-  id: Joi.string(),
   is_published: Joi.boolean().required(),
 });
 
-export const updateImageValidator = Joi.object({
-  image_url: Joi.string().required(),
-  image_public_id: Joi.string().required(),
-});

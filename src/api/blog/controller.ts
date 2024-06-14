@@ -13,6 +13,16 @@ export const createBlog: RequestHandler = async (req, res, next) => {
 
     blogContents.slug_title = slugifer(blogContents.title);
 
+    const image: any = req.file;
+    if (!image) {
+      return next(new AppError("Please upload blog image.", 400));
+    }
+
+    await cloudinary.uploader.upload(image?.path).then((response: any) => {
+      blogContents.image_url = response.secure_url;
+      blogContents.image_key = response.public_id;
+    });
+
     // Insert blog content
     const blog = await Blog.createBlog(blogContents);
 
@@ -152,7 +162,7 @@ export const updateBlogImage: RequestHandler = async (req, res, next) => {
   try {
     const id: string = req.params.id;
 
-    const { image_url, image_public_id } = <BlogRequest.IUpdateImage>req.value;
+    const data = <BlogRequest.IUpdateImage>req.value;
 
     const blog = await Blog.getById(id);
 
@@ -162,13 +172,22 @@ export const updateBlogImage: RequestHandler = async (req, res, next) => {
       );
     }
 
-    await cloudinary.uploader.destroy(blog.image_public_id);
+    
+    const image: any = req.file;
+    if (!image) {
+      return next(new AppError("Please upload blog image.", 400));
+    }
+
+    await cloudinary.uploader.upload(image?.path).then((response: any) => {
+      data.image_url = response.secure_url;
+      data.image_key = response.public_id;
+    });
+
+
+    await cloudinary.uploader.destroy(blog.image_key);
 
     // Update blog. Also check if the dal method returns null
-    const updatedBlog = await Blog.updateBlogImage(blog, {
-      image_url,
-      image_public_id,
-    });
+    const updatedBlog = await Blog.updateBlogImage(blog, data);
 
     // Response
     res.status(201).json({

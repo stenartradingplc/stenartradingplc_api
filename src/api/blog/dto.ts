@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 export default interface IBlogDoc extends Document {
   title: string;
   image_url: string;
-  image_public_id: string;
+  image_key: string;
   content: string;
   slug_title: string;
   is_published: boolean;
@@ -19,7 +19,7 @@ declare global {
       slug_title?: string;
       is_published?: boolean;
       image_url: string;
-      image_public_id: string;
+      image_key: string;
     }
 
     interface IUpdateBlogInput {
@@ -33,7 +33,7 @@ declare global {
 
     interface IUpdateImage {
       image_url: string;
-      image_public_id: string;
+      image_key: string;
     }
     interface IPublishBlog {
       id: string;

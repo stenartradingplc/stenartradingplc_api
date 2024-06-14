@@ -15,8 +15,8 @@ export default class Event {
         event_date: data.event_date,
         event_location: data.event_location,
         is_published: data.is_published,
-        img: data.img,
-        img_cloudinary_public_id: data.img_cloudinary_public_id,
+        image_url: data.image_url,
+        image_key: data.image_key,
         youtube_link: data.youtube_link,
       });
 
@@ -82,8 +82,8 @@ export default class Event {
           content: data.content,
           event_date: data.event_date,
           event_location: data.event_location,
-          img: data.img,
-          im_cloudinary_public_id: data.img_cloudinary_public_id,
+          image_url: data.image_url,
+          im_cloudinary_public_id: data.image_key,
           youtube_link: data.youtube_link,
         },
         { runValidators: true, new: true }
@@ -120,16 +120,6 @@ export default class Event {
     try {
       const events = await EventModel.find({ is_published: true });
       return events;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Get drafted events
-  static async getDraftedEvents(): Promise<IEventDoc[]> {
-    try {
-      const draftedEvents = await EventModel.find({ is_published: false });
-      return draftedEvents;
     } catch (error) {
       throw error;
     }

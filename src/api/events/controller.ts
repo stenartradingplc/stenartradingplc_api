@@ -3,12 +3,23 @@ import AppError from "../../utils/app_error";
 import { RequestHandler } from "express";
 import configs from "../../configs";
 import cloudinaryConfig from "../../utils/cloudinary";
+import cloudinary from "../../utils/cloudinary";
 
 // Create event
 export const createEvent: RequestHandler = async (req, res, next) => {
   try {
     // Incoming data
     const data = <EventRequest.ICreateEventInput>req.value;
+
+    const image: any = req.file;
+    if (!image) {
+      return next(new AppError("Please upload event image.", 400));
+    }
+
+      await cloudinary.uploader.upload(image?.path).then((response: any) => {
+            data.image_url = response.secure_url;
+            data.image_key = response.public_id;
+      });
 
     const event = await Event.createEvent(data); // Create event
 
@@ -52,7 +63,7 @@ export const getEvent: RequestHandler = async (req, res, next) => {
       data: { event },
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
@@ -61,7 +72,7 @@ export const deleteEvent: RequestHandler = async (req, res, next) => {
   try {
     // Delete event. Check if it existed before it was being deleted
     const event = await Event.deleteEvent(req.params.id);
-    console.log(event);
+
     if (!event) return next(new AppError("Event not found", 404));
 
     // Response
@@ -92,7 +103,7 @@ export const updateEventDetail: RequestHandler = async (req, res, next) => {
       data: { event },
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
@@ -133,21 +144,6 @@ export const getPublishedEvents: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Get all drafted events
-export const getDraftedEvents: RequestHandler = async (req, res, next) => {
-  try {
-    const draftedEvents = await Event.getDraftedEvents();
-
-    // Response
-    res.status(200).json({
-      status: "SUCCESS",
-      results: draftedEvents.length,
-      data: { draftedEvents },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Delete all events
 export const deleteAllEvents: RequestHandler = async (req, res, next) => {
@@ -178,19 +174,34 @@ export const updateImage: RequestHandler = async (req, res, next) => {
   try {
     // Incoming data
     const data = <EventRequest.IUpdateImage>req.value;
+    const id = req.params.id;
+
+    const event = await Event.getEvent(id);
+    if(!event){
+      return next(new AppError("No event found.", 404));
+    }
+
+    const image: any = req.file;
+    if (!image) {
+      return next(new AppError("Please upload event image.", 400));
+    }
+
+    await cloudinary.uploader.upload(image?.path).then((response: any) => {
+      data.image_url = response.secure_url;
+      data.image_key = response.public_id;
+    });
 
     // Update event image
-    const event = await Event.updateImage(req.params.id, data);
-    if (!event) return next(new AppError("Event not found", 404));
+    const updatedEvent = await Event.updateImage(req.params.id, data);
 
     // Delete old image
-    await cloudinaryConfig.uploader.destroy(event.img_cloudinary_public_id);
+    await cloudinaryConfig.uploader.destroy(event.image_key);
 
     // Response
     res.status(200).json({
       status: "Success",
       message: "Event image updated successfully",
-      data: { event },
+      data: { event: updatedEvent },
     });
   } catch (error) {
     next(error);
