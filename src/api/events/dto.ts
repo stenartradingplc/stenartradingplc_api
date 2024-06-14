@@ -6,8 +6,8 @@ export default interface IEventDoc extends Document {
   event_date: string;
   event_location: string;
   is_published: boolean;
-  img: string;
-  img_cloudinary_public_id: string;
+  image_url: string;
+  image_key: string;
   youtube_link: string;
 }
 
@@ -19,8 +19,8 @@ declare global {
       event_date: Date;
       event_location: string;
       is_published: boolean;
-      img: string;
-      img_cloudinary_public_id: string;
+      image_url: string;
+      image_key: string;
       youtube_link: string;
     }
 
@@ -30,8 +30,8 @@ declare global {
       content?: string;
       event_date?: Date;
       event_location?: string;
-      img?: string;
-      img_cloudinary_public_id?: string;
+      image_url?: string;
+      image_key?: string;
       youtube_link?: string;
     }
 
@@ -43,8 +43,8 @@ declare global {
       delete_key: string;
     }
     interface IUpdateImage {
-      img: string;
-      img_cloudinary_public_id: string;
+      image_url: string;
+      image_key: string;
     }
   }
 }

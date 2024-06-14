@@ -93,11 +93,11 @@ export default class Blog {
   // Update status
   static async updateBlogImage(
     blog: IBlogDoc,
-    newImageData: { image_url: string; image_public_id: string }
+    newImageData: { image_url: string; image_key: string }
   ): Promise<IBlogDoc> {
     try {
       blog.image_url = newImageData.image_url;
-      blog.image_public_id = newImageData.image_public_id;
+      blog.image_key = newImageData.image_key;
       await blog.save();
       return blog;
     } catch (error) {

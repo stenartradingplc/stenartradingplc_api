@@ -19,12 +19,12 @@ import {
   deleteAllBlogsValidation,
   publishBlogValidator,
   updateBlogValidation,
-  updateImageValidator,
 } from "./validation";
 
 //custom modules
 import protect from "../../auth/protect";
 import auth from "../../auth/auth";
+import { upload } from "../../utils/file_upload";
 
 const router = Router();
 
@@ -33,6 +33,7 @@ router
   .post(
     protect,
     auth("Super-admin", "Admin"),
+    upload.single("image"),
     validate(createBlogValidation),
     createBlog
   )
@@ -70,7 +71,7 @@ router.patch(
   "/updateimage/:id",
   protect,
   auth("Super-admin", "Admin"),
-  validate(updateImageValidator),
+  upload.single("image"),
   updateBlogImage
 );
 

@@ -8,7 +8,6 @@ import {
   updateEventDetail,
   publishEvent,
   getPublishedEvents,
-  getDraftedEvents,
   deleteAllEvents,
   updateImage,
 } from "./controller";
@@ -18,20 +17,22 @@ import {
   deleteAllValidator,
   updateEventValidation,
   updateIsPublishedValidator,
-  updateImageValidator,
 } from "./validation";
 import protect from "../../auth/protect";
 import auth from "../../auth/auth";
+import { upload } from "../../utils/file_upload";
 
 router
   .route("/")
   .post(
     protect,
     auth("Super-admin", "Admin"),
+    upload.single("image"),
     validate(createEventValidation),
     createEvent
   )
-  .get(getAllEvents)
+  .get(protect,
+    auth("Super-admin", "Admin"),getAllEvents)
   .delete(
     protect,
     auth("Super-admin"),
@@ -48,7 +49,6 @@ router.patch(
 );
 
 router.get("/published", getPublishedEvents);
-router.get("/drafts", protect, auth("Super-admin", "Admin"), getDraftedEvents);
 
 router
   .route("/:id")
@@ -65,7 +65,7 @@ router.patch(
   "/updateimage/:id",
   protect,
   auth("Super-admin"),
-  validate(updateImageValidator),
+  upload.single("image"),
   updateImage
 );
 

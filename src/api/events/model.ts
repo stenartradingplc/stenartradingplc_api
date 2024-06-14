@@ -12,7 +12,7 @@ const eventSchema: Schema = new mongoose.Schema(
     content: {
       type: String,
       required: [true, "Content is required"],
-      min: [10, "Content mut contain at least 10 characters"],
+      min: [10, "Content must contain at least 10 characters"],
     },
     event_date: Date,
     event_location: String,
@@ -20,8 +20,8 @@ const eventSchema: Schema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    img: String,
-    img_cloudinary_public_id: String,
+    image_url: {type: String, required: [true, "please provide an image"]},
+    image_key: {type: String, required: [true, "please provide an image"]},
     youtube_link: String,
   },
   {
