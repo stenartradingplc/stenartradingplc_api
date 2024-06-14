@@ -46,11 +46,11 @@ export default (
   err.status = err.status || "ERROR";
 
   if (err.name === "JsonWebTokenError") {
-    err = new AppError("Please login", 401);
+    err = new AppError("Please login", 403);
   }
 
   if (err.name === "TokenExpiredError") {
-    err = new AppError("Please login", 401);
+    err = new AppError("Please login", 403);
   }
 
   if (err.message.includes("E11000")) {
