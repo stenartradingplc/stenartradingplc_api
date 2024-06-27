@@ -37,6 +37,13 @@ declare global {
       phone_number: string;
       role: string;
     }
+    interface IUpdateAdminInfo {
+      first_name: string;
+      last_name: string;
+      email: string;
+      phone_number: string;
+      role: string;
+    }
     interface IAdminLogin {
       email_or_phone: string;
       password: string;

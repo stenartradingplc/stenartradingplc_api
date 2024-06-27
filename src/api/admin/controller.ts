@@ -169,6 +169,27 @@ export const getAdmin: RequestHandler = async (req, res, next) => {
   }
 };
 
+// Update a single admin
+export const updateAdmin: RequestHandler = async (req, res, next) => {
+  try {
+    const admin = await Admin.getAdmin(req.params.id);
+    const data = <AdminRequest.IUpdateAdminInfo>req.value;
+    if (!admin)
+      return next(new AppError("There is no Admin with the specified ID", 404));
+
+    await Admin.updateAccount(req.params.id, data);
+
+    // Respond
+    res.status(201).json({
+      status: "SUCCESS",
+      message: "Admin information updated successfuly!"
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 // update default password
 export const updateDefaultPassword: RequestHandler = async (req, res, next) => {
   try {

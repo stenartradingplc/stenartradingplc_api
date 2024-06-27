@@ -93,6 +93,7 @@ router.patch(
 router
   .route("/:id")
   .get(protect, auth("Super-admin", "Admin"), getAdmin)
+  .patch(protect, auth("Super-admin", "Admin"), getAdmin)
   .delete(protect, auth("Super-admin"), deleteAdmin);
 
 export default router;
