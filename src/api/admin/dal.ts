@@ -160,6 +160,18 @@ export default class Admin {
     }
   }
 
+  // Update Admin details
+  static async updateAccount(
+    id: string,
+    information: AdminRequest.IUpdateAdminInfo,
+  ): Promise<void> {
+    try {
+      await AdminModel.updateOne({_id: id}, {$set: {...information}});
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   // Update admin account status
   static async updateAdminAccountStatus(
