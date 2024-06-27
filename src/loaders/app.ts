@@ -11,7 +11,7 @@ import contactUseRouter from "../api/contact_us/router";
 import blogRouter from "../api/blog/router";
 
 // Third party middleware
-app.use(cors());
+app.use(cors({origin:"*"}));
 
 // Parse incoming data - from request body and query
 app.use(express.json());
