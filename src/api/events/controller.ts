@@ -173,7 +173,7 @@ export const deleteAllEvents: RequestHandler = async (req, res, next) => {
 export const updateImage: RequestHandler = async (req, res, next) => {
   try {
     // Incoming data
-    const data = <EventRequest.IUpdateImage>req.value;
+    const data = <EventRequest.IUpdateImage> {image_key: "", image_url:""};
     const id = req.params.id;
 
     const event = await Event.getEvent(id);
@@ -204,6 +204,7 @@ export const updateImage: RequestHandler = async (req, res, next) => {
       data: { event: updatedEvent },
     });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 };
