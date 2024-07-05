@@ -81,7 +81,7 @@ export default class Blog {
     try {
       const blog = BlogModel.findByIdAndUpdate(
         data.id,
-        { is_published: data.is_published },
+        {$set: { is_published: data.is_published }},
         { new: true }
       );
       return blog;
