@@ -26,7 +26,7 @@ const blogSchema: Schema = new Schema(
       unique: true,
     },
     is_published: {
-      type: String,
+      type: Boolean,
       default: false,
     },
   },
