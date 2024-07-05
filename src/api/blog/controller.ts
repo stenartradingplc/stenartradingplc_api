@@ -149,7 +149,7 @@ export const publishBlog: RequestHandler = async (req, res, next) => {
     // Response
     res.status(200).json({
       status: "SUCCESS",
-      message: "Blog published successfully",
+      message: "Blog updated successfully",
       data: { blog },
     });
   } catch (error) {
