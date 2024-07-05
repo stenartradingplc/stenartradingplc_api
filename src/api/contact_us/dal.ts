@@ -44,7 +44,7 @@ export default class ContactUs {
   static async updateContactUsStatus(adminName: string, contactUsId: string){
     try {
       await ContactUsModel.findByIdAndUpdate(contactUsId, 
-        {read_status: "Old"})
+        {$set: {read_status: "Old"}})
     } catch (error) {
       throw error;
     }
