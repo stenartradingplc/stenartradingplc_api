@@ -9,6 +9,7 @@ import adminRouter from "../api/admin/router";
 import eventRouter from "../api/events/router";
 import contactUseRouter from "../api/contact_us/router";
 import blogRouter from "../api/blog/router";
+import testimonialsRouter from "../api/testimonials/router";
 
 // Third party middleware
 app.use(cors({origin:"*"}));
@@ -22,6 +23,7 @@ app.use("/api/v1/admins", adminRouter);
 app.use("/api/v1/events", eventRouter);
 app.use("/api/v1/contactus", contactUseRouter);
 app.use("/api/v1/blogs", blogRouter);
+app.use("/api/v1/testimonials", testimonialsRouter);
 
 // Healthcheck endpoint
 app.get("/healthcheck", (req, res, next) => {
