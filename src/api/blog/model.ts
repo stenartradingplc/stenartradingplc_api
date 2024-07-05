@@ -6,9 +6,7 @@ const blogSchema: Schema = new Schema(
     title: {
       type: String,
       unique: true,
-      required: [true, "Content is required"],
-      minlength: [10, "Content must have at least 10 characters"],
-      maxlength: [500, "Content must have less than 500 characters"],
+      required: [true, "title is required"],
     },
     image_url: {
       type: String,
