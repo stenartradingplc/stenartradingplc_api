@@ -7,8 +7,6 @@ const testimonialSchema: Schema = new Schema(
       type: String,
       unique: true,
       required: [true, "person_name is required"],
-      minlength: [10, "person_name must have at least 10 characters"],
-      maxlength: [500, "person_name must have less than 50 characters"],
     },
     image_url: {
       type: String,
