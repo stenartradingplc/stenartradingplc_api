@@ -51,7 +51,7 @@ export const getById: RequestHandler = async (req, res, next) => {
 
     const firstReadBy = admin.first_name + " " + admin.last_name;
 
-    await ContactUs.checkAndUpdateReadStatus(firstReadBy, req.params.id);
+    await ContactUs.checkAndUpdateReadStatus(req.params.id);
 
     // Find and check if it exists
     const contactUs = await ContactUs.getById(req.params.id);
